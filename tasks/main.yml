@@ -1,0 +1,15 @@
+---
+
+- name: Validating if supported platform
+  fail: 
+    msg: RedHat 8 and CentOS 8 don't support docker anymore, please use podman instead
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '8'
+
+
+# Install Docker for Ubuntu based OS
+- include_tasks: ubuntu.yml
+  when: ansible_distribution == 'Ubuntu'
+
+# Install Docker for RedHat 7 based OS
+- include_tasks: rhel7.yml
+  when: ansible_os_family == 'RedHat'

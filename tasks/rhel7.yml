@@ -1,0 +1,45 @@
+---
+
+- name: Remove existing unofficial Docker packages
+  yum:
+    name: "{{ packages }}"
+    state: absent
+  vars:
+    packages:
+    - docker
+    - docker-client
+    - docker-client-latest
+    - docker-common
+    - docker-latest
+    - docker-latest-logrotate
+    - docker-logrotate
+    - docker-engine
+
+- name: Install yum utils
+  yum:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
+
+- name: Add Docker repo
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docer-ce.repo
+
+- name: Install Docker
+  package:
+    name: docker-ce
+    state: present
+    update_cache: yes
+  notify:
+    - docker status
+
+- name: Start Docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
