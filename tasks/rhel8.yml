@@ -1,0 +1,46 @@
+---
+
+- name: Remove existing unofficial Docker packages
+  dnf:
+    name: "{{ packages }}"
+    state: absent
+  vars:
+    packages:
+    - docker
+    - docker-client
+    - docker-client-latest
+    - docker-common
+    - docker-latest
+    - docker-latest-logrotate
+    - docker-logrotate
+    - docker-engine
+
+- name: Add dnf command manager
+  command: dnf install 'dnf-command(config-manager)' -y
+  args:
+    warn: false
+
+- name: Add Docker repo
+  command: dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo -y
+  args:
+    warn: false
+
+- name: Install Container.io
+  dnf:
+    name: 'https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm'
+    state: present
+    update_cache: yes
+
+- name: Install Docker
+  dnf:
+    name: docker-ce
+    state: present
+    update_cache: yes
+  notify:
+    - docker status
+
+- name: Start Docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes

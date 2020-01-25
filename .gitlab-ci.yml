@@ -26,12 +26,17 @@ variables:
   script:
     - molecule test
 
-Ubuntu:
+Ubuntu-1804:
   extends: .BaseTest
   variables:
     MOLECULE_DISTRO: "ubuntu1804"
 
-CentOS:
+CentOS-7:
   extends: .BaseTest
   variables:
     MOLECULE_DISTRO: "centos7"
+
+CentOS-8:
+  extends: .BaseTest
+  variables:
+    MOLECULE_DISTRO: "centos8"
